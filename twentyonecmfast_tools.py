@@ -146,7 +146,7 @@ def nf_to_tau(z,nf):
     return tau
 
 
-def compare_runs(run, labels=None):
+def compare_runs(runs, labels=None):
     # Input list of file globs to 21cmfast runs
     # Will generate some plots to compare the runs
     nruns = len(runs)
