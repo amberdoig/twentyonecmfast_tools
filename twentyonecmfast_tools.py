@@ -179,9 +179,9 @@ def compare_runs(runs, labels=None):
                      yerr=errs[run][errs[run].shape[0] / 2, :])
         plt.subplot(224)
         # Plot small and large scale power vs redshift
-        ind = argmin(np.abs(ks[run][0, :] - lowk))
+        ind = np.argmin(np.abs(ks[run][0, :] - lowk))
         temp, = plt.plot(parms[run][:, 0], delta2s[run][:, ind])
-        ind = argmin(np.abs(ks[run][0, :] - highk))
+        ind = np.argmin(np.abs(ks[run][0, :] - highk))
         plt.plot(parms[run][:, 0], delta2s[run][:, ind], '--', color=temp.get_color())
 
     plt.subplot(221)
