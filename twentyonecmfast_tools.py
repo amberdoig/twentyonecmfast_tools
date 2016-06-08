@@ -160,5 +160,4 @@ def compare_runs(*args):
 
     plt.figure('comparison')
     for run in xrange(nruns):
-        plot(parms[run][:, 0], parms[run][:, 5])
-        
+        plt.plot(parms[run][:, 0], parms[run][:, 5],'o')
