@@ -160,7 +160,7 @@ def compare_runs(*args):
         errs.append(temp[3][order, :])
 
     plt.figure('Tave')
-    clf()
+    plt.clf()
     handles = []
     for run in xrange(nruns):
         handles += plt.plot(parms[run][:, 0], parms[run][:, 5], label=str(run))
