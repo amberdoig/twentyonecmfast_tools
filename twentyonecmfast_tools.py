@@ -163,9 +163,33 @@ def compare_runs(runs, labels=None):
         delta2s.append(temp[2][order, :])
         errs.append(temp[3][order, :])
 
-    plt.figure('Tave')
+    plt.figure('Comparison')
     plt.clf()
     handles = []
+    lowk, highk = 0.1, 2.0
     for run in xrange(nruns):
+        plt.subplot(221)
         handles += plt.plot(parms[run][:, 0], parms[run][:, 5], label=labels[run])
+        plt.subplot(222)
+        plt.plot(parms[run][:, 0], parms[run][:, 1], label=labels[run])
+        plt.subplot(223)
+        # Plot a PS at mid redshift
+        plt.errorbar(ks[run][ks[run].shape[0] / 2, :],
+                     delta2s[run][delta2s[run].shape[0] / 2, :],
+                     yerr=errs[run][err[run].shape[0] / 2, :])
+        plt.subplot(224)
+        # Plot small and large scale power vs redshift
+        ind = argmin(np.abs(ks[run][0, :] - lowk))
+        temp, = plt.plot(parms[run][:, 0], delta2s[run][:, ind])
+        ind = argmin(np.abs(ks[run][0, :] - highk))
+        plt.plot(parms[run][:, 0], delta2s[run][:, ind], '--', color=temp.get_color())
+
+    plt.subplot(221)
+    plt.title('Tave vs z')
     plt.legend(handles=handles)
+    plt.subplot(222)
+    plt.title('Neutral fraction vs z')
+    plt.subplot(223)
+    plt.title('Mid z PS')
+    plt.subplot(224)
+    plt.title('Large and Small scale PS')
