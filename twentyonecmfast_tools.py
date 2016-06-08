@@ -146,12 +146,16 @@ def nf_to_tau(z,nf):
     return tau
 
 
-def compare_runs(*args):
+def compare_runs(run, labels=None):
     # Input list of file globs to 21cmfast runs
     # Will generate some plots to compare the runs
-    nruns = len(args)
+    nruns = len(runs)
+    if labels is None:
+        labels = range(nruns)
+    if len(labels) < nruns:
+        labels += range(len(labels), nruns)
     parms, ks, delta2s, errs = [], [], [], []
-    for run in args:
+    for run in runs:
         temp = load_andre_models(run)
         order = np.argsort(temp[0][:, 0])  # sort by redshift
         parms.append(temp[0][order, :])
@@ -163,5 +167,5 @@ def compare_runs(*args):
     plt.clf()
     handles = []
     for run in xrange(nruns):
-        handles += plt.plot(parms[run][:, 0], parms[run][:, 5], label=str(run))
+        handles += plt.plot(parms[run][:, 0], parms[run][:, 5], label=labels[run])
     plt.legend(handles=handles)
