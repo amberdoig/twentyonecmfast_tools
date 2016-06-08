@@ -153,11 +153,15 @@ def compare_runs(*args):
     parms, ks, delta2s, errs = [], [], [], []
     for run in args:
         temp = load_andre_models(run)
-        parms.append(temp[0])
-        ks.append(temp[1])
-        delta2s.append(temp[2])
-        errs.append(temp[3])
+        order = np.argsort(temp[0][:, 0])  # sort by redshift
+        parms.append(temp[0][order, :])
+        ks.append(temp[1][order, :])
+        delta2s.append(temp[2][order, :])
+        errs.append(temp[3][order, :])
 
-    plt.figure('comparison')
+    plt.figure('Tave')
+    clf()
+    handles = []
     for run in xrange(nruns):
-        plt.plot(parms[run][:, 0], parms[run][:, 5],'o')
+        handles += plt.plot(parms[run][:, 0], parms[run][:, 5], label=str(run))
+    plt.legend(handles=handles)
