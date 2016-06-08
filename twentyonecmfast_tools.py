@@ -1,4 +1,4 @@
-import numpy as n,os
+import numpy as np, os
 from glob import glob
 from scipy.interpolate import LinearNDInterpolator,interp1d
 from capo import cosmo_units
@@ -15,19 +15,19 @@ def build_model_interp(parm_array,delta2_array,k_array,redshift,
     #with columns (z,Nf,Nx,alphaX,MminX,other-stuff....)
     #delta2_array expected to be nmodels,nkmodes
     #NOTE: assumes all models are computed at the same k modes
-    closest_redshift = parm_array[n.abs(parm_array[:,0]-redshift).argmin(),0]
+    closest_redshift = parm_array[np.abs(parm_array[:,0]-redshift).argmin(),0]
     model_points = parm_array[parm_array[:,0]==closest_redshift,2:5]
 
     #interpolate NX and Mmin in log space
-    model_points[:,0] = n.log10(model_points[:,0])
-    model_points[:,2] = n.log10(model_points[:,2])
+    model_points[:,0] = np.log10(model_points[:,0])
+    model_points[:,2] = np.log10(model_points[:,2])
     #get the power spectrum values that go with this redshift
     raw_model_values = delta2_array[parm_array[:,0]==closest_redshift]
     model_values = [[]]*len(raw_model_values)
     if not regrid_ks is None: #regrid to a different set of k bins
         for i in xrange(len(raw_model_values)):
             model_values[i] = interp1d(k_array,raw_model_values[i,:])(regrid_ks)
-        model_values = n.array(model_values)
+        model_values = np.array(model_values)
         k_array = regrid_ks
         print "interpolated sim shape after regridding",model_values.shape
     else:
@@ -41,22 +41,22 @@ def build_model_interp(parm_array,delta2_array,k_array,redshift,
     return Pk_models_atz
 def build_tau_interp_model(parm_array):
     #interpolate NX and Mmin in log space
-    alphaXs = n.sort(list(set(parm_array[:,3])))
-    Mmins = n.sort(list(set(parm_array[:,4])))
-    Nxs = n.sort(list(set(parm_array[:,2])))
+    alphaXs = np.sort(list(set(parm_array[:,3])))
+    Mmins = np.sort(list(set(parm_array[:,4])))
+    Nxs = np.sort(list(set(parm_array[:,2])))
     taus = []
     for Nx in Nxs:
         for alphaX in alphaXs:
             for Mmin in Mmins:
-                _slice = n.argwhere(all_and([
+                _slice = np.argwhere(all_and([
                                     parm_array[:,2]==Nx,
                                     parm_array[:,3]==alphaX,
                                     parm_array[:,4]==Mmin]
                                     ))
-                taus.append([n.log10(Nx),alphaX,n.log10(Mmin),
+                taus.append([np.log10(Nx),alphaX,np.log10(Mmin),
                             nf_to_tau(parm_array[_slice,0].squeeze(),
                             parm_array[_slice,1].squeeze())])
-    taus = n.array(taus)
+    taus = np.array(taus)
     return LinearNDInterpolator(taus[:,:3],taus[:,3])
 
 def all_and(arrays):
@@ -65,7 +65,7 @@ def all_and(arrays):
     if len(arrays)==1:return arrays
     out = arrays[0]
     for arr in arrays[1:]:
-        out = n.logical_and(out,arr)
+        out = np.logical_and(out,arr)
     return out
 
 def load_andre_models(fileglob):
@@ -88,17 +88,17 @@ def load_andre_models(fileglob):
                             parms[7][-3:], #alphaX
                             parms[8][5:], #Mmin
                             parms[9][5:]]))
-        D = n.loadtxt(filename)
+        D = np.loadtxt(filename)
         k_array.append(D[:,0])
         delta2_array.append(D[:,1])
         delta2_err_array.append(D[:,2])
-    parm_array = n.array(parm_array)
+    parm_array = np.array(parm_array)
     raw_parm_array = parm_array.copy()
-    k_array = n.ma.array(k_array)
+    k_array = np.ma.array(k_array)
     raw_k_array = k_array.copy()
-    delta2_array = n.ma.masked_invalid(delta2_array)
+    delta2_array = np.ma.masked_invalid(delta2_array)
     raw_delta2_array = delta2_array.copy()
-    delta2_err_array = n.ma.array(delta2_err_array)
+    delta2_err_array = np.ma.array(delta2_err_array)
     return parm_array,k_array,delta2_array,delta2_err_array
 def load_andre_global_models(fileglob):
     #input a string that globs to the list of input model files
@@ -118,9 +118,9 @@ def load_andre_global_models(fileglob):
                              parms[6][-3:], #alphaX
                              parms[7][5:], #Mmin
                             ]))
-        D = n.loadtxt(filename)
+        D = np.loadtxt(filename)
         global_evolution.append(D)
-    return n.array(parm_array),global_evolution
+    return np.array(parm_array),global_evolution
 
 def nf_to_tau(z,nf):
     #based on Liu et al 1509.08463
@@ -136,10 +136,10 @@ def nf_to_tau(z,nf):
     Omm = 0.3089
     Oml = 1 - Omm
     coeff = 0.00210228 #this includes all the constants out front of eq 10
-    z = n.concatenate([n.linspace(0,z.min()),z])
-    nf = n.concatenate([n.zeros(50),nf])
+    z = np.concatenate([np.linspace(0,z.min()),z])
+    nf = np.concatenate([np.zeros(50),nf])
     xHI = interp1d(z,1-nf)
-    E = lambda z: xHI(z) * (1+z)**2 / n.sqrt(Oml + Omm * (1+z)**3)
+    E = lambda z: xHI(z) * (1+z)**2 / np.sqrt(Oml + Omm * (1+z)**3)
     tau_H  = integrate.quad(E,z.min(),z.max())[0]*coeff
     tau_He = 0.001223 #That accounts for helium reionization
     tau = tau_H + tau_He
