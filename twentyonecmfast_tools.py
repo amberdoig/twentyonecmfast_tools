@@ -186,10 +186,12 @@ def compare_runs(runs, labels=None):
 
     plt.subplot(221)
     plt.title('Tave vs z')
-    plt.legend(handles=handles)
+    plt.legend(handles=handles, loc=4)
     plt.subplot(222)
     plt.title('Neutral fraction vs z')
     plt.subplot(223)
     plt.title('Mid z PS')
+    plt.loglog()
     plt.subplot(224)
     plt.title('Large and Small scale PS')
+    plt.semilogy()
