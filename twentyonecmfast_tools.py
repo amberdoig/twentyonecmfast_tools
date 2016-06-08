@@ -176,7 +176,7 @@ def compare_runs(runs, labels=None):
         # Plot a PS at mid redshift
         plt.errorbar(ks[run][ks[run].shape[0] / 2, :],
                      delta2s[run][delta2s[run].shape[0] / 2, :],
-                     yerr=errs[run][err[run].shape[0] / 2, :])
+                     yerr=errs[run][errs[run].shape[0] / 2, :])
         plt.subplot(224)
         # Plot small and large scale power vs redshift
         ind = argmin(np.abs(ks[run][0, :] - lowk))
