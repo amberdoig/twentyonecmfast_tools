@@ -3,12 +3,13 @@ from glob import glob
 from scipy.interpolate import LinearNDInterpolator,interp1d
 from capo import cosmo_units
 from scipy import integrate
+import matplotlib.pyplot as plt
 
 def build_model_interp(parm_array,delta2_array,k_array,redshift,
     regrid_ks=None):
     #input an array of models, the parameters for each model, list of k modes
     #   and the desired redshift
-    #return a list of ks and a list of matching interpolation functions, 
+    #return a list of ks and a list of matching interpolation functions,
     # function has call f(log10(Nx),alphaX,log10(MminX))
     #parm_array expected to be nmodels,nparms
     #with columns (z,Nf,Nx,alphaX,MminX,other-stuff....)
@@ -34,7 +35,7 @@ def build_model_interp(parm_array,delta2_array,k_array,redshift,
     #for a single redshift, build an interplation for each k mode
     Pk_models_atz = []
     for ki,k in enumerate(k_array):
-        
+
         M = LinearNDInterpolator(model_points,model_values[:,ki])
         Pk_models_atz.append(M)
     return Pk_models_atz
@@ -57,7 +58,7 @@ def build_tau_interp_model(parm_array):
                             parm_array[_slice,1].squeeze())])
     taus = n.array(taus)
     return LinearNDInterpolator(taus[:,:3],taus[:,3])
-    
+
 def all_and(arrays):
     #input a list or arrays
     #output the arrays anded together
@@ -125,8 +126,8 @@ def nf_to_tau(z,nf):
     #based on Liu et al 1509.08463
     """
     i) Take your ionization history, x_{HII} (z).
-    ii) Numerically compute the integral \int_0^{zCMB} dz x_{HII} (1+z)^2 / sqrt{OmL + Omm (1+z)^3}. 
-    I would take OmL = 1 - Omm and Omm = 0.3089. 
+    ii) Numerically compute the integral \int_0^{zCMB} dz x_{HII} (1+z)^2 / sqrt{OmL + Omm (1+z)^3}.
+    I would take OmL = 1 - Omm and Omm = 0.3089.
     In practice the integral doesn't need to be literally taken to zCMB since the ionization fraction is basically zero well before you hit those redshifts
     iii) Multiply by 0.00210228. This includes all the constants in Eq. (10) of my paper.
     iv) Add 0.001. That accounts for helium reionization (if you want to be more precise, it's 0.001223 for helium reionization happening at z = 3.5 and 0.000986 for z = 3.0).
@@ -140,7 +141,24 @@ def nf_to_tau(z,nf):
     xHI = interp1d(z,1-nf)
     E = lambda z: xHI(z) * (1+z)**2 / n.sqrt(Oml + Omm * (1+z)**3)
     tau_H  = integrate.quad(E,z.min(),z.max())[0]*coeff
-    tau_He = 0.001223 #That accounts for helium reionization 
+    tau_He = 0.001223 #That accounts for helium reionization
     tau = tau_H + tau_He
     return tau
 
+
+def compare_runs(*args):
+    # Input list of file globs to 21cmfast runs
+    # Will generate some plots to compare the runs
+    nruns = len(args)
+    parms, ks, delta2s, errs = [], [], [], []
+    for run in args:
+        temp = load_andre_models(run)
+        parms.append(temp[0])
+        ks.append(temp[1])
+        delta2s.append(temp[2])
+        errs.append(temp[3])
+
+    plt.figure('comparison')
+    for run in xrange(nruns):
+        plot(parms[run][:, 0], parms[run][:, 5])
+        
