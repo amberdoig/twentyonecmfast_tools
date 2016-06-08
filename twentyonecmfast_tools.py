@@ -167,6 +167,7 @@ def compare_runs(runs, labels=None):
     plt.clf()
     handles = []
     lowk, highk = 0.1, 2.0
+    midz = (parms[0][-1, 0] - parms[0][0, 0]) / 2.0
     for run in xrange(nruns):
         plt.subplot(221)
         handles += plt.plot(parms[run][:, 0], parms[run][:, 5], label=labels[run])
@@ -174,9 +175,8 @@ def compare_runs(runs, labels=None):
         plt.plot(parms[run][:, 0], parms[run][:, 1], label=labels[run])
         plt.subplot(223)
         # Plot a PS at mid redshift
-        plt.errorbar(ks[run][ks[run].shape[0] / 2, :],
-                     delta2s[run][delta2s[run].shape[0] / 2, :],
-                     yerr=errs[run][errs[run].shape[0] / 2, :])
+        ind = np.argmin(np.abs(parms[run][:, 0] - midz))
+        plt.errorbar(ks[run][ind, :], delta2s[run][ind, :], yerr=errs[run][ind, :])
         plt.subplot(224)
         # Plot small and large scale power vs redshift
         ind = np.argmin(np.abs(ks[run][0, :] - lowk))
