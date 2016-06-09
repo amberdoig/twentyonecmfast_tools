@@ -190,7 +190,7 @@ def compare_runs(runs, labels=None):
     plt.subplot(222)
     plt.title('Neutral fraction vs z')
     plt.subplot(223)
-    plt.title('Mid z PS')
+    plt.title('PS at z = ' + str(midz))
     plt.loglog()
     plt.subplot(224)
     plt.title('Large and Small scale PS')
