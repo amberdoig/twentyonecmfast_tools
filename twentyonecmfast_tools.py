@@ -82,12 +82,12 @@ def load_andre_models(fileglob):
     for filename in filenames:
         parms = os.path.basename(filename).split('_')
         if parms[0].startswith('reion'):continue
-        parm_array.append(map(float,[parms[3][1:],
+        parm_array.append(map(float,[parms[3][1:], #z
                             parms[4][2:], #Nf
                             parms[6][2:], #Nx
                             parms[7][-3:], #alphaX
                             parms[8][5:], #Mmin
-                            parms[9][5:]]))
+                            parms[9][5:]])) #avg temp
         D = np.loadtxt(filename)
         k_array.append(D[:,0])
         delta2_array.append(D[:,1])
