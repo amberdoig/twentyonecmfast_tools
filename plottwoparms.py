@@ -2,8 +2,9 @@
 #options are all within parm array
 #options: z, Nf, Nx, alphaX, Mmin, avg temp
 
-fileglob = '/home/amber/data/*'
+fileglob = '/home/amber/data/alpha0/*'
 #looks at all files within data
+#change to alpha0 or alpha1 as desired
 
 from twentyonecmfast_tools import *
 #imports everything within directory
@@ -32,7 +33,7 @@ p,k,d,e=load_andre_models(fileglob)
 x=np.argsort(p[:,0])
 
 #fixed data vs other item in same order
-plt.plot(p[x,0],p[x,5])
+plt.plot(p[x,0],p[x,1])
 
 #display plot
 plt.show()
