@@ -3,8 +3,8 @@
 #options: z, Nf, Nx, alphaX, Mmin, avg temp
 
 fileglob = '/home/amber/data/alpha0/*'
-#looks at all files within data
-#change to alpha0 or alpha1 as desired
+fileblob = '/home/amber/data/alpha1/*'
+#looks at all files within specified alpha folder
 
 from twentyonecmfast_tools import *
 #imports everything within directory
@@ -15,6 +15,7 @@ import numpy as np
 #load_andre_models returns 4 sets of data
 #this assigns variables to the 4 sets
 p,k,d,e=load_andre_models(fileglob)
+P,K,D,E=load_andre_models(fileblob)
 #p is the parm array
 #k is the k array
 #d is the delta2 array
@@ -31,9 +32,17 @@ p,k,d,e=load_andre_models(fileglob)
 
 #fixed bottom axis of plot
 x=np.argsort(p[:,0])
+X=np.argsort(P[:,0])
 
 #fixed data vs other item in same order
-plt.plot(p[x,0],p[x,1])
+plt.plot(p[x,0],p[x,5], color='r', label='alpha0')
+plt.plot(P[X,0],P[X,5], color='b', label='alpha1')
+
+#customize plot
+plt.ylabel('avg temp')
+plt.xlabel('z')
+plt.title('z vs. avg temp')
+plt.legend(loc='lower right')
 
 #display plot
 plt.show()
