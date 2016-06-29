@@ -8,7 +8,7 @@ def plotter(glob_one,glob_two):
     or whole address can be entered"""
 
 p,k,d,e=load_andre_models(glob_one)
-P,K,D,D=load_andre_models(glob_two)
+P,K,D,E=load_andre_models(glob_two)
 
 onez=np.argsort(p[:,0])
 twoz=np.argsort(P[:,0])
